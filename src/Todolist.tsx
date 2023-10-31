@@ -9,68 +9,93 @@ export type TaskType = {
 export type TodolistType = {
     title: string
     tasks: TaskType[]
+    filter: FilterValuesType
     removeTask: (id: string) => void
-    changeFilter: (value: FilterValuesType)=> void
+    changeFilter: (value: FilterValuesType) => void
     addTask: (title: string) => void
+    changeTaskStatus: (taskId: string, isDone: boolean) => void
 }
 export const Todolist = (props: TodolistType) => {
-const [inputTitle, setinputTitle] = useState<string>("")
+    const [inputTitle, setinputTitle] = useState<string>("")
+    const [error, setError] = useState<boolean>(false)
 
-    const listItems = props.tasks.map((t)=>{
-        const removeHandler = ()=>{
-            return props.removeTask(t.id)
+
+    const listItems = props.tasks.map((t) => {
+        const removeHandler = () => props.removeTask(t.id)
+        const onChangeStatus = (e: ChangeEvent<HTMLInputElement>) => {
+            props.changeTaskStatus(t.id, e.currentTarget.checked)
         }
-        return(
-            <li key={t.id}><input type="checkbox" checked={t.isDone}/>
+        return (
+            <li key={t.id} className={t.isDone ? "is-done" : ""}>
+                <input type="checkbox"
+                       checked={t.isDone}
+                       onChange={onChangeStatus}
+                />
                 <span>{t.title}</span>
                 <button onClick={removeHandler}>X</button>
             </li>
         )
     })
 
-    const onChangeFilterAll = ()=> props.changeFilter("all")
-    const onChangeFilterActive = ()=> props.changeFilter("active")
-    const onChangeFilterCompleted = ()=> props.changeFilter("completed")
+    const onChangeFilterAll = () => props.changeFilter("all")
+    const onChangeFilterActive = () => props.changeFilter("active")
+    const onChangeFilterCompleted = () => props.changeFilter("completed")
     const addTaskHandler = () => {
-        props.addTask(inputTitle)
-        setinputTitle("")
+        const trimmedTask = inputTitle.trim()
+        if (trimmedTask) {
+            props.addTask(inputTitle.trim())
+            setinputTitle("")
+        } else {
+            setError(true)
+        }
     }
     const onChangeAddTaskHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        error && setError(false)
         setinputTitle(e.currentTarget.value)
     }
     const onKeyDownAddTaskHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        e.keyCode === 13 && e.ctrlKey && addTaskHandler()
+        if (e.keyCode === 13) {
+            e.shiftKey && addTaskHandler()
+        }
     }
 
     const tasksList = props.tasks.length
         ? <ul>{listItems}</ul>
-        : <span style = {{color: "red"}}>Your tasksList is empty</span>
+            : <span className={"error-message"}>Your tasksList is empty</span>
 
-    const isBTNDisabled = !inputTitle || inputTitle.length >= 5
+    const userMessage = error
+        ? <span className={"error-message"}>Field is required</span>
+            : inputTitle.length < 10
+        ? <span className={"message"}>Enter new title</span>
+            : <span className={"error-message"}>Your title is too long</span>
 
-    const spanTitle = inputTitle.length < 5
-        ? <span style = {{color: "green"}}>"Enter new title"</span>
-        : <span style = {{color: "red"}}>"Your title is too long"</span>
+    const isBTNDisabled = !inputTitle || inputTitle.length >= 10
+
+    const classNameAll = props.filter === "all" ? "active-filter" : ""
+    const classNameActive = props.filter === "active" ? "active-filter" : ""
+    const classNameCompleted = props.filter === "completed" ? "active-filter" : ""
 
     return (
         <div>
             <h3>{props.title}</h3>
             <div>
-                <input value={inputTitle}
+                <input className={error ? "error" : ""}
+                       value={inputTitle}
                        onChange={onChangeAddTaskHandler}
                        onKeyDown={onKeyDownAddTaskHandler}
                 />
-                <button disabled = {isBTNDisabled}
-                    onClick = {addTaskHandler}>+</button>
+                <button disabled={isBTNDisabled}
+                        onClick={addTaskHandler}>
+                    {"+"}</button>
                 <div>
-                    <span>{spanTitle}</span>
+                    {userMessage}
                 </div>
             </div>
-                {tasksList}
+            {tasksList}
             <div>
-                <button onClick={onChangeFilterAll}>All</button>
-                <button onClick={onChangeFilterActive}>Active</button>
-                <button onClick={onChangeFilterCompleted}>Completed</button>
+                <button className={classNameAll} onClick={onChangeFilterAll}>All</button>
+                <button className={classNameActive} onClick={onChangeFilterActive}>Active</button>
+                <button className={classNameCompleted} onClick={onChangeFilterCompleted}>Completed</button>
             </div>
         </div>
     )

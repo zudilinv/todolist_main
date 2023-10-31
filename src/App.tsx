@@ -19,22 +19,16 @@ function App() {
     const removeTask = (taskId: string) => {
         setTasks(tasks.filter((t) => t.id !== taskId))
     }
-    // const removeTask = (id: number)=>{           // Self made .ftlter
-    //     let res: TaskType[] = []
-    //     for (let i = 0; i < tasks.length; i++) {
-    //         if (tasks[i].id !== id) {
-    //             res.push(tasks[i])
-    //         }
-    //     }
-    //     return res
-    // }
     const changeFilter = (value: FilterValuesType) => {
         setFilter(value)
     }
     const addTask = (title: string) => {
-        // @ts-ignore
         const newTask = {id: crypto.randomUUID(), title, isDone: false}
         setTasks([newTask, ...tasks])
+    }
+    const changeTaskStatus = (taskId: string, isDone: boolean) => {
+        const changedTask = tasks.map(t=> t.id === taskId ? {...t, isDone: isDone} : t)
+        setTasks(changedTask)
     }
     const getFilteredTasks = (tasks: TaskType[], filter: FilterValuesType): TaskType[] => {
         switch (filter) {
@@ -52,13 +46,25 @@ function App() {
     return (
         <div className={"App"}>
             <Todolist title={title}
+                      filter={filter}
                       tasks={filteredTasks}
                       removeTask={removeTask}
                       changeFilter={changeFilter}
                       addTask={addTask}
+                      changeTaskStatus={changeTaskStatus}
             />
         </div>
     );
 }
 
 export default App;
+//------------------------------------------------------>
+// const removeTask = (id: number)=>{        //// Self made filter
+//     let res: TaskType[] = []
+//     for (let i = 0; i < tasks.length; i++) {
+//         if (tasks[i].id !== id) {
+//             res.push(tasks[i])
+//         }
+//     }
+//     return res
+// }
