@@ -1,26 +1,28 @@
-import React from 'react';
-import './App.css';
+import React from "react";
+import "./App.css";
+import {TaskType, Todolist} from "./Todolist";
 
 function App() {
+
+    const title1 = "What to learn"
+    const title2 = "What to bay"
+
+    const tasks1: TaskType[] = [
+        {id: 1, title: "HTML&CSS", isDone: true},
+        {id: 2, title: "JS", isDone: true},
+        {id: 3, title: "ReactJS", isDone: false},
+        {id: 4, title: "Redux", isDone: false}
+    ]
+    const tasks2: TaskType[] = [
+        {id: 1, title: "Bread", isDone: true},
+        {id: 2, title: "Milk", isDone: false},
+        {id: 3, title: "Juice", isDone: false}
+    ]
+
     return (
         <div className="App">
-            <div>
-                <h3>What to learn</h3>
-                <div>
-                    <input/>
-                    <button>+</button>
-                </div>
-                <ul>
-                    <li><input type="checkbox" checked={true}/> <span>HTML&CSS</span></li>
-                    <li><input type="checkbox" checked={true}/> <span>JS</span></li>
-                    <li><input type="checkbox" checked={false}/> <span>React</span></li>
-                </ul>
-                <div>
-                    <button>All</button>
-                    <button>Active</button>
-                    <button>Completed</button>
-                </div>
-            </div>
+            <Todolist title={title1} tasks={tasks1}/>
+            <Todolist title={title2} tasks={tasks2}/>
         </div>
     );
 }
