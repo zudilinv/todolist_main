@@ -1,5 +1,5 @@
 import React, {ChangeEvent} from "react";
-import {FilterValuesType, TodoTasksStateType} from "./App";
+import {FilterValuesType, TasksStateType} from "./App";
 import {AddItemForm} from "./AddItemForm";
 import {EditableSpan} from "./EditableSpan";
 import IconButton from "@mui/material/IconButton";
@@ -15,7 +15,7 @@ export type TaskType = {
 type TodoType = {
     title: string
     todoId: string
-    tasks: TodoTasksStateType
+    tasks: TasksStateType
     filter: FilterValuesType
     removeTask: (todoId: string, id: string) => void
     addTask: (todoId: string, title: string) => void
@@ -34,6 +34,7 @@ export const Todolist = (props: TodoType) => {
 
     const listItems = filteredTasks.map((t) => {
         const removeHandler = () => props.removeTask(props.todoId, t.id)
+
         const onChangeStatus = (e: ChangeEvent<HTMLInputElement>) => {
             props.changeTaskStatus(props.todoId, t.id, e.currentTarget.checked)
         }
@@ -47,12 +48,10 @@ export const Todolist = (props: TodoType) => {
                 {/*       checked={t.isDone}*/}
                 {/*       onChange={onChangeStatus}*/}
                 {/*/>*/}
-
                 <Checkbox defaultChecked
                           color="success"
                           checked={t.isDone}
-                          onChange={onChangeStatus}
-                />
+                          onChange={onChangeStatus}/>
 
                 <EditableSpan title={t.title} onChangeTitle={onChangeSpanTitle}/>
                 {/*<button onClick={removeHandler}>X</button>*/}
